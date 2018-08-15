@@ -1,0 +1,28 @@
+{
+  "name": "tomouct",
+  "version": "1.0.0",
+  "description": "Web-based remote monitoring and control of a tomographic instrument",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.16.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skhumatine/tomouct.git"
+  },
+  "keywords": [
+    "tomography",
+    "thesis",
+    "uct"
+  ],
+  "author": "Skhumbuzo Matine",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/skhumatine/tomouct/issues"
+  },
+  "homepage": "https://github.com/skhumatine/tomouct#readme"
+}
