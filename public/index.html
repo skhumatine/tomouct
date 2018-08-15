@@ -3,11 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Tomography UCT</title>
+
+    <!--plotly js cdn-->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
+    <!--make the page responsive -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--w3 schools style sheet-->
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
+
+    <!--Ajex cdn-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 
 </head>
@@ -15,17 +23,25 @@
 <div class="w3-container">
 <h1>Tomo playground</h1>
 
-<div class="w3-display-container w3-green" style="height:700px;">
+<div class="w3-display-container w3-green" style="height:100px;">
 
-    <div class="w3-display-topmiddle ">
-        <button onclick="randomize()">Randomize!</button>
-    </div>
-    <div class="w3-display-bottommiddle ">
-        <div id="graph">
+    <div class="w3-display-topleft ">
 
-        </div>
+        <!--get plot data when this button is pressed-->
+        <button id="start" >Start!</button>
     </div>
+
+    <div class="w3-display-topright ">
+    <button id="stop">Stop!</button>
+    </div>
+
 </div>
+
+    <div >
+
+        <!--div which a plot will be injected into-->
+        <div id="graph"></div>
+    </div>
 </div>
 
 

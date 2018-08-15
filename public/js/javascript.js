@@ -1,32 +1,162 @@
+//find div with id graph, plot a graph in it
 Plotly.plot('graph', [{
-    x: [1, 2,3],
-    y: [0, 0.5, 2],
     line: {simplify: false},
 
 }],  layout= {
-    width: 800,
-        height: 500});
+    title: 'u curves',
+    xaxis: {
+        title: 'Readings',
+        range: [0,256]
+    },
+    yaxis: {
+        title: 'Values',
+        range: [0,5000]
+    }
+});
 
-function randomize() {
-
-    // repeat with the interval of 2 seconds
-    var timerId = setInterval(function () {
-        Plotly.animate('graph', {
-            data: [{y: [Math.random(), Math.random(), Math.random()]}],
-            traces: [0],
-            layout: {
-                width: 800,
-                height: 500}
-        }, {
-            transition: {
-                duration: 500,
-                easing: 'cubic-in-out'
-            }
-        })
-    }, 100);
-
-    // after 5 seconds stop
-    setTimeout(function(){ clearInterval(timerId) }, 5000);
+//once the page has loaded , invoke the callback function
+$(document).ready(function(){
 
 
-}
+    //get element with id="start" , trigger a function once it is clicked
+    $("#start").click(function(){
+
+        //send get request to local server , on response trigger the callback function
+        $.get("http://localhost:8080/", function(data, status){
+
+            // data is an object with structure { 'error': bool, 'result': [] }
+
+            //use the result parameter as data for a new plot
+            Plotly.animate('graph', {
+                data: [{y: data.result}]
+            }, {
+                transition: {
+                    duration: 0,
+                },
+                frame: {
+                    duration: 0,
+                    redraw:false
+                }
+            })
+        });
+
+    })
+
+});
+
+
+//testing functions ,
+// function randomize() {
+//
+//     // repeat with the interval of 2 seconds
+//     timerId = setInterval(function () {
+//         Plotly.animate('graph', {
+//             data: [{y: [Math.random()*5000, Math.random()*5000, Math.random()*5000,Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
+//                     Math.random()*5000, Math.random()*5000, Math.random()*5000
+//
+//                 ]}]
+//         }, {
+//             transition: {
+//                 duration: 0,
+//             },
+//             frame: {
+//                 duration: 0,
+//                 redraw:false
+//             }
+//         })
+//     }, 100);
+//
+//     // // after 5 seconds stop
+//     // setTimeout(function(){ clearInterval(timerId) }, 5*5000);
+//
+//
+// }
+//
+// //stop simulation
+// function stopRandomize(){
+//     clearInterval(timerId)
+//
+// }

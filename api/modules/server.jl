@@ -30,7 +30,7 @@ export index
 function index(req)
 
 #respond with an array as a result, check Joseki API on github
- json_responder(req, rand!(zeros(Int16,100),0:4000))
+ json_responder(req, rand!(zeros(Int16,256),0:5000))
 
  end
 
