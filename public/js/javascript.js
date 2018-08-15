@@ -21,26 +21,46 @@ $(document).ready(function(){
     //get element with id="start" , trigger a function once it is clicked
     $("#start").click(function(){
 
-        //send get request to local server , on response trigger the callback function
-        $.get("http://localhost:8080/", function(data, status){
 
-            // data is an object with structure { 'error': bool, 'result': [] }
+       timerId = setInterval(function(){
 
-            //use the result parameter as data for a new plot
-            Plotly.animate('graph', {
-                data: [{y: data.result}]
-            }, {
-                transition: {
-                    duration: 0,
-                },
-                frame: {
-                    duration: 0,
-                    redraw:false
-                }
-            })
-        });
+           //send get request to local server , on response trigger the callback function
+           $.get("http://localhost:8080/", function(data, status){
+
+               // data is an object with structure { 'error': bool, 'result': [] }
+
+               //use the result parameter as data for a new plot
+               Plotly.animate('graph', {
+                   data: [{y: data.result}]
+               }, {
+                   transition: {
+                       duration: 0,
+                   },
+                   frame: {
+                       duration: 0,
+                       redraw:false
+                   }
+               })
+           });
+
+
+       }, 100);
+
+
+    });
+
+
+    //get element with id="stop" , trigger a function once it is clicked
+    $("#stop").click(function(){
+
+
+        clearInterval(timerId)
+
 
     })
+
+
+
 
 });
 
@@ -52,92 +72,7 @@ $(document).ready(function(){
 //     timerId = setInterval(function () {
 //         Plotly.animate('graph', {
 //             data: [{y: [Math.random()*5000, Math.random()*5000, Math.random()*5000,Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000,
-//                     Math.random()*5000, Math.random()*5000, Math.random()*5000
-//
-//                 ]}]
+//                     Math.random()*5000, Math.random()*5000,]}]
 //         }, {
 //             transition: {
 //                 duration: 0,
