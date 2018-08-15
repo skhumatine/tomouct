@@ -25,7 +25,7 @@ $(document).ready(function(){
        timerId = setInterval(function(){
 
            //send get request to local server , on response trigger the callback function
-           $.get("http://localhost:8080/", function(data, status){
+           $.get("https://localhost:8080/", function(data, status){
 
                // data is an object with structure { 'error': bool, 'result': [] }
 
@@ -61,7 +61,7 @@ $(document).ready(function(){
 
 
 
-                                                          
+
 });
 
 
