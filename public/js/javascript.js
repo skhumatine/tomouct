@@ -23,10 +23,10 @@ function randomize() {
                 easing: 'cubic-in-out'
             }
         })
-    }, 1);
+    }, 100);
 
     // after 5 seconds stop
-    setTimeout(function(){ clearInterval(timerId) }, 4*5000);
+    setTimeout(function(){ clearInterval(timerId) }, 5000);
 
 
 }

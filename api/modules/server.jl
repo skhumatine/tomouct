@@ -11,24 +11,27 @@
 julia>
 ```
 """
-module server
-
-export x,y
-
-x = "x"
-y() = "Y"
-p = "pbjkbjb"
 
 
-end
 
-module server2
+module api  #module to handle any requests on julia
 
-export x,y
+#global module imports
+using Joseki, JSON
 
-x = "x"
-y() = "Y"
-p = "pbjkbjb"
+#functions or variables to export from the api module
+export index
 
+#index is a function that is called when one goes to
+#'http://localhost:8080/', this is set an endpoint in ../index.jl
+
+# req is of type HTTP.Request
+#to set type req::HTTP.Request
+function index(req)
+
+#respond with an array as a result, check Joseki API on github
+ json_responder(req, rand!(zeros(Int16,100),0:4000))
+
+ end
 
 end
