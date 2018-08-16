@@ -12,4 +12,10 @@ app.use(express.static('public')); //tell server which folder to use to server s
 app.get('*',(req, res)=> getHandler(req, res)); //set app instance to call the get request handler whenever there is a get request
 
 
-app.listen(PORT, () => console.log(`Listening on ${ PORT }`)); //start the server an listen on port 3000
+var server = app.listen(PORT, () => {
+
+    var host = server.address().address;
+    var port = server.address().port;
+    console.log('running at http://' + host + ':' + port)
+
+}); //start the server and listen on port 3000
