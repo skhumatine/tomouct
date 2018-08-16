@@ -23,7 +23,7 @@ using Joseki, JSON
 export index
 
 #index is a function that is called when one goes to
-#'http://localhost:8080/', this is set an endpoint in ../index.jl
+#'http://localhost:80/', this is set an endpoint in ../index.jl
 
 # req is of type HTTP.Request
 #to set type req::HTTP.Request
