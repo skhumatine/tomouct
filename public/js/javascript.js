@@ -25,7 +25,7 @@ $(document).ready(function(){
        timerId = setInterval(function(){
 
            //send get request to local server , on response trigger the callback function
-           $.get("https://shrinkable-goose-8657.dataplicity.io/", function(data, status){
+           $.get("https://192.168.137.243:8080/", function(data, status){
 
                // data is an object with structure { 'error': bool, 'result': [] }
 
