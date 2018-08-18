@@ -66,21 +66,15 @@ var data3d = [{
 
 var layout3d = {
     title: 'Surface graph',
-    xaxis: {
-        title: 'X axis',
-        range: [0,10]
-    },
-    yaxis: {
-        title: 'Y axis',
-        range: [0,10]
-    },
-    zaxis: {
-        title: 'Z axis',
-        range: [0,10]
+    height: 700,
+    scene: {
+        xaxis: {range: [0, 15]},
+        yaxis: {range: [0, 15]},
+        zaxis: {range: [0, 15]}
     },
     margin: {
-        l: 0,
-        r: 0,
+        l: 10,
+        r: 10,
         b: 10,
         t: 30,
     }
@@ -168,14 +162,14 @@ $(document).ready(function(){
                             [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10],
                             [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10],
                             [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10],
-                            [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10],
-                            [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10],
-                            [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10],
-                            [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10],
-                            [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10],
-                            [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10],
-                            [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10],
-                            [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10],
+                            [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*15,Math.random()*15,Math.random()*15,Math.random()*15,Math.random()*10,Math.random()*10,Math.random()*10],
+                            [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*15,Math.random()*15,Math.random()*15,Math.random()*15,Math.random()*10,Math.random()*10,Math.random()*10],
+                            [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*15,Math.random()*15,Math.random()*15,Math.random()*15,Math.random()*10,Math.random()*10,Math.random()*10],
+                            [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*15,Math.random()*15,Math.random()*15,Math.random()*15,Math.random()*10,Math.random()*10,Math.random()*10],
+                            [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*15,Math.random()*15,Math.random()*15,Math.random()*15,Math.random()*10,Math.random()*10,Math.random()*10],
+                            [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*15,Math.random()*15,Math.random()*15,Math.random()*15,Math.random()*10,Math.random()*10,Math.random()*10],
+                            [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*15,Math.random()*15,Math.random()*15,Math.random()*15,Math.random()*10,Math.random()*10,Math.random()*10],
+                            [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*15,Math.random()*15,Math.random()*15,Math.random()*15,Math.random()*10,Math.random()*10,Math.random()*10],
                             [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10],
                             [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10],
                             [Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10,Math.random()*10],
@@ -193,7 +187,7 @@ $(document).ready(function(){
             })
 
 
-        }, 100);
+        }, 50);
 
 
     });
