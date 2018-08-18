@@ -20,31 +20,115 @@
 
 </head>
 <body>
-<div class="w3-container">
-<h1>Tomo playground</h1>
 
-<div class="w3-display-container w3-green" style="height:100px;">
 
-    <div class="w3-display-topleft ">
+<div class="w3-container w3-teal">
+    <h1>Tomo Playground</h1>
+</div>
 
-        <!--get plot data when this button is pressed-->
-        <button id="start" >Start!</button>
+<div class="w3-row-padding w3-margin-top">
+
+    <!--div where u curves data is displayed-->
+    <div class="w3-half w3-padding-16">
+        <div class="w3-card">
+
+            <!--row of buttons to fetch and stop fetching data-->
+            <div class="w3-center">
+                <div class="w3-bar">
+                    <!--get plot data when this button is pressed-->
+                    <button id="startUcurves"
+                            class="w3-button w3-teal w3-margin-top w3-round-large">
+                        Fetch uCurves Data</button>
+                    <!--button to stop fetching plot data -->
+                    <button id="stopUcurves"
+                            class="w3-button w3-cyan w3-margin-top w3-round-large">
+                        Stop fetching data</button>
+
+                </div>
+
+            </div>
+
+
+            <!--div which a plot will be injected into-->
+            <div id="graphUcurves"></div>
+
+        </div>
     </div>
 
-    <div class="w3-display-topright ">
-    <button id="stop">Stop!</button>
+
+    <!--div where u curves histogram data is displayed-->
+    <div class="w3-half w3-padding-16">
+        <div class="w3-card">
+
+            <!--row of buttons to fetch and stop fetching data-->
+            <div class="w3-center">
+                <div class="w3-bar">
+                    <!--get plot data when this button is pressed-->
+                    <button id="startHistogram"
+                            class="w3-button  w3-disabled w3-teal w3-margin-top w3-round-large">
+                        Display Histogram data</button>
+                    <!--button to stop fetching plot data -->
+                    <button id="stopHistogram"
+                            class="w3-button  w3-disabled w3-cyan w3-margin-top w3-round-large">
+                        Stop displaying histogram data</button>
+
+                </div>
+
+            </div>
+
+
+            <!--div which a plot will be injected into-->
+            <div id="graphHistogram"></div>
+
+        </div>
     </div>
+
+    <!--div where u curves 3d data data is displayed-->
+    <div class="w3-padding-16" >
+        <div class="w3-card" >
+
+            <!--row of buttons to fetch and stop fetching data-->
+            <div class="w3-center">
+                <div class="w3-bar">
+                    <!--get plot data when this button is pressed-->
+                    <button id="start3d"
+                            class="w3-button w3-teal w3-margin-top w3-round-large">
+                        Start surface display</button>
+                    <!--button to stop fetching plot data -->
+                    <button id="stop3d"
+                            class="w3-button w3-cyan w3-margin-top w3-round-large">
+                        Stop surface display</button>
+
+                </div>
+
+            </div>
+
+            <!--div which a plot will be injected into-->
+            <div class="w3-center">
+                <div id="graph3d" ></div>
+            </div>
+
+
+
+
+        </div>
+    </div>
+
+
+
 
 </div>
 
-    <div >
+<!-- Footer -->
+<footer class="w3-container w3-center w3-teal w3-large">
+    <h3>University Of Cape Town</h3>
+    <h5>Electrical Engineering Department</h5>
+    <h5>EEE4022S Final year project</h5>
+    <p >Skhumbuzo J Matine</p>
+    <p class="w3-medium">Tomography playground</p>
 
-        <!--div which a plot will be injected into-->
-        <div id="graph"></div>
-    </div>
-</div>
 
-
-<script src="js/javascript.js"></script>
+</footer>
+<script src="js/ucurves.js"></script>
 </body>
 </html>
