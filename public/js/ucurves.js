@@ -1,3 +1,4 @@
+//todo:  set scripts to start on startup of pi
 
 //---------------------------uCurve initial line graph-----------//
 //initial ucurve data

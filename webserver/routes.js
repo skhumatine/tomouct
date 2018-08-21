@@ -29,8 +29,7 @@ getHandler = function(req, res) {
 
                 //send the response with data from the request
                 res.send(response.data)
-            })
-            .catch((error)=>{
+            }).catch((error)=>{
 
                 //log error
                 console.log(error);
