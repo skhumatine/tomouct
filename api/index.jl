@@ -25,11 +25,12 @@ include(joinpath("modules", "server.jl"))
 ### Create and run the server
 
 # create endpoints to be assigned to router
+#endpoints are functions associated with a specific request
+#api is a module defined in server.jl,
 endpoints = [
-    #api is a module defined in server.jl,
-    #index is a fucntion defined inside the api module
-    (api.index, "GET", "/")
-
+    (api.capture_frame, "GET", "/capture-frame"), #capture_frame is a function defined inside the api module
+    (api.get_ports, "GET", "/get-ports"),   # get_ports function defined inside the api module
+    (api.initialise, "GET", "/initialise")   # initialise function is defined inside the api module
 
 ]
 
