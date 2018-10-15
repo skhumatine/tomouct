@@ -1,7 +1,11 @@
 <component name="ProjectDictionaryState">
   <dictionary name="skhum">
     <words>
+      <w>baudrate</w>
+      <w>captureframe</w>
       <w>joinpath</w>
+      <w>readavailable</w>
+      <w>serialports</w>
     </words>
   </dictionary>
 </component>
