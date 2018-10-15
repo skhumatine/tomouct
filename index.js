@@ -3,7 +3,7 @@ const app = express();               //create an instance of the module call it 
 
 const getHandler =  require('./webserver/routes'); //import file to handle all get requests
 
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 8000;
 
 
 app.use(express.static('public')); //tell server which folder to use to server static files

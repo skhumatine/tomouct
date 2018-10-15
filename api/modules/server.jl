@@ -20,7 +20,7 @@ module api  # name of module to handle any requests on julia
 using Joseki, JSON, SerialPorts, HTTP
 
 #functions or variables to export from the api module
-export capture_frame, get_ports, initialise, Read_sequence_table_file
+export capture_frame, get_ports, initialise
 
 
 # req is of type HTTP.Request
@@ -66,10 +66,10 @@ function initialise(req::HTTP.Request)
 
     # Open com port and assign handle to s.
     s = try
-        SerialPort("COM5",baudrate)
+        SerialPort(comport,baudrate)
     catch
         println("\n\nClosing existing connection")
-        close(s)
+
         error("\n\nCould not open USB port.... aborting script.")
       return error_responder(req, "Could not open USB port try again!")
     end
@@ -108,7 +108,7 @@ function initialise(req::HTTP.Request)
 
 
 # once port is opened and sequence table is uploaded, send a response
-    json_responder(req, "Port successfully opened, sequence table successfully uploaded.")
+    json_responder(req, s)
 #end of initialise()
 end
 

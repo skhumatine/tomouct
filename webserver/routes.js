@@ -23,7 +23,7 @@ getHandler = function(req, res) {
     //if
     if(req.path === '/api/index'){
 
-        axios.get('http://localhost:8080/')
+        axios.get('http://localhost:8080/capture-frame')
             .then(function (response) {
                 // handle success
 
