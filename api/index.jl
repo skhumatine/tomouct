@@ -3,7 +3,7 @@
 #=
 example:
 - Julia version: 0.6.4
-- Author: skhum
+- Author: skhumbuzo Matine
 - Date: 2018-08-15
 =#
 
@@ -18,9 +18,6 @@ using Joseki, JSON
 #local file imports
 #import modules from server.jl file in modules folder
 include(joinpath("modules", "server.jl"))
-
-
-
 
 ### Create and run the server
 
