@@ -89,15 +89,42 @@ Plotly.newPlot('graph3d', data3d, layout3d);
 //once the page has loaded , invoke the callback function
 $(document).ready(function(){
 
+    //get element with id="getPorts" , trigger a function once it is clicked
+    $("#getPorts").click(function(){
 
-    //get element with id="start" , trigger a function once it is clicked
+
+        // first clear any child in div
+        radio_home.innerHTML = '';
+
+        //send get request to local server , on response trigger the callback function
+        $.get("/api/get-ports", function(data, status){
+
+            // data is an object with structure { 'error': bool, 'result': [] }
+
+            // if there was an error, display it
+            if (data.error){
+                console.log('error getting ports: ',  data.result)
+            }else {
+
+                console.log(data.result);
+
+                makeRadioButton(data.result);
+            }
+
+        });
+
+
+    });
+
+
+    //get element with id="startUcurves" , trigger a function once it is clicked
     $("#startUcurves").click(function(){
 
 
        timerId = setInterval(function(){
 
            //send get request to local server , on response trigger the callback function
-           $.get("/api/index", function(data, status){
+           $.get("/api/capture-frame", function(data, status){
 
                // data is an object with structure { 'error': bool, 'result': [] }
 
@@ -141,6 +168,8 @@ $(document).ready(function(){
 
 
     });
+
+
 
 
 
@@ -207,6 +236,26 @@ $(document).ready(function(){
 
 });
 
+// get the ide of the radio buttons div
+var radio_home = document.getElementById("radioButtons");
+//this funtions ads radio buttons when called
+function makeRadioButton(options) {
+    var div = document.createElement("div");
+    for (var i = 0; i < options.length; i++) {
+        var label = document.createElement("label");
+        var radio = document.createElement("input");
+        radio.type = "radio";
+        radio.name = "port";
+        radio.value = options[i];
+        label.appendChild(radio);
+        label.appendChild(document.createTextNode( "  " + options[i]));
+        div.appendChild(label);
+
+        //if we are on the last iteration there is no need to create another <br>
+        if(i+1<options.length)div.appendChild(document.createElement("br"));
+    }
+    radio_home.appendChild(div);
+}
 
 //testing functions ,
 // function randomize() {

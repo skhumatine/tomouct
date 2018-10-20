@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Tomography UCT</title>
 
-    <!--plotly js cdn-->
+    <!--Plotly.js cdn-->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
     <!--make the page responsive -->
@@ -14,22 +14,68 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
 
-    <!--Ajex cdn-->
+    <!--Ajax cdn-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 
 </head>
 <body>
 
+<!--page header-->
+<div class="w3-top">
+    <div class="w3-container w3-teal">
+        <h3>Tomo Playground</h3>
+    </div>
 
-<div class="w3-container w3-teal">
-    <h1>Tomo Playground</h1>
+    <div id="alert" style="margin-top: 0; display: none " class="w3-panel w3-blue w3-display-container">
+        <span onclick="this.parentElement.style.display='none'"
+            class="w3-button w3-blue w3-large w3-display-topright">&times;</span>
+        <h6>Info!</h6>
+        <p id="alertMessage"></p>
+    </div>
+
 </div>
+
+
+<br>
+<br>
+
+
+
 
 <div class="w3-row-padding w3-margin-top">
 
-    <!--div where u curves data is displayed-->
+
+
+    <!--div with all the initialisation controls-->
     <div class="w3-half w3-padding-16">
+        <div class="w3-card w3-padding-bottom">
+
+            <!--row of buttons to fetch ports, and start initialising-->
+            <div class="w3-center">
+                <div class="w3-bar">
+                    <!--get available ports-->
+                    <button id="getPorts"
+                            class="w3-button w3-teal w3-margin-top w3-round-large">
+                        Get Available Ports</button>
+                    <!--initialise instrument -->
+                    <button id="initialise"
+                            class="w3-button w3-cyan w3-margin-top w3-round-large">
+                        Initialise instruments</button>
+
+                </div>
+
+            </div>
+
+            <div id="radioButtons" style="margin-bottom: 10px" class="w3-container"></div>
+
+        </div>
+    </div>
+
+
+    <!--div where u curves histogram data is displayed-->
+    <div class="w3-half w3-padding-16">
+
         <div class="w3-card">
 
             <!--row of buttons to fetch and stop fetching data-->
@@ -53,38 +99,11 @@
             <div id="graphUcurves"></div>
 
         </div>
-    </div>
 
-
-    <!--div where u curves histogram data is displayed-->
-    <div class="w3-half w3-padding-16">
-        <div class="w3-card">
-
-            <!--row of buttons to fetch and stop fetching data-->
-            <div class="w3-center">
-                <div class="w3-bar">
-                    <!--get plot data when this button is pressed-->
-                    <button id="startHistogram"
-                            class="w3-button  w3-disabled w3-teal w3-margin-top w3-round-large">
-                        Display Histogram data</button>
-                    <!--button to stop fetching plot data -->
-                    <button id="stopHistogram"
-                            class="w3-button  w3-disabled w3-cyan w3-margin-top w3-round-large">
-                        Stop displaying histogram data</button>
-
-                </div>
-
-            </div>
-
-
-            <!--div which a plot will be injected into-->
-            <div id="graphHistogram"></div>
-
-        </div>
     </div>
 
     <!--div where u curves 3d data data is displayed-->
-    <div class="w3-padding-16" >
+    <div class=" w3-half w3-padding-16" >
         <div class="w3-card" >
 
             <!--row of buttons to fetch and stop fetching data-->
@@ -114,18 +133,52 @@
         </div>
     </div>
 
+    <div class="w3-half w3-padding-16">
+        <div class="w3-card">
+
+            <!--row of buttons to fetch and stop fetching data-->
+            <div class="w3-center">
+                <div class="w3-bar">
+                    <!--get plot data when this button is pressed-->
+                    <button id="startHistogram"
+                            class="w3-button  w3-disabled w3-teal w3-margin-top w3-round-large">
+                        Display Histogram data</button>
+                    <!--button to stop fetching plot data -->
+                    <button id="stopHistogram"
+                            class="w3-button  w3-disabled w3-cyan w3-margin-top w3-round-large">
+                        Stop displaying histogram data</button>
+
+                </div>
+
+            </div>
+
+
+            <!--div which a plot will be injected into-->
+            <div id="graphHistogram"></div>
+
+        </div>
+
+    </div>
+
 
 
 
 </div>
-
+<br>
+<br>
+<br>
+<br>
 <!-- Footer -->
-<footer class="w3-container w3-center w3-teal w3-large">
-    <h3>University Of Cape Town</h3>
-    <h5>Electrical Engineering Department</h5>
-    <h5>EEE4022S Final year project</h5>
-    <p >Skhumbuzo J Matine</p>
-    <p class="w3-medium">Tomography playground</p>
+<footer class="w3-container w3-center w3-row-padding w3-bottom w3-teal w3-large">
+
+    <div class="w3-col s6 w3-center">
+        <h5>University Of Cape Town</h5>
+        <h5>Electrical Engineering Department</h5>
+    </div>
+    <div class="w3-col s6 w3-center">
+        <h5 >EEE4022S Final year project</h5>
+        <h5 >Skhumbuzo J Matine</h5>
+    </div>
 
 
 </footer>
