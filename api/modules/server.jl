@@ -64,15 +64,25 @@ function initialise(req::HTTP.Request)
     comport = params["port"]
     baudrate = 9600
 
+
     # Open com port and assign handle to s.
     s = try
         SerialPort(comport,baudrate)
-    catch
-        println("\n\nClosing existing connection")
 
-        error("\n\nCould not open USB port.... aborting script.")
+    catch(error)
+
+        println("\n\nerror opening port ", comport, error)
+
+
+       # error("\n\nCould not open USB port.... aborting script.")
       return error_responder(req, "Could not open USB port try again!")
     end
+
+println("\n success opening port, information about port ", comport, "\n ", s)
+
+println("\n Clearing any old junk data in the input stream")
+junk = readavailable(s)   # Clear out any old data
+println("\n Number of junk bytes read: ",length(junk))
 
 
 #upload sequence table
@@ -80,35 +90,39 @@ function initialise(req::HTTP.Request)
     println("\nLoading sequence table from file")
     file_name_sequence_table="testtable.txt"
 
-    #Loading sequence table from file
-    hex_string = Read_sequence_table_file(file_name_sequence_table, params["table"])
-    println("\n\nhex_string:   ",hex_string)
+    #Loading sequence table from file, table is another parameter which comes with the request
+    #hex_string = Read_sequence_table_file(file_name_sequence_table, params["table"]) this line is for when a user can provide the text tablefrom the request parameter
 
-    println("Uploading sequence table to instrument \n")
+    hex_string = Read_sequence_table_file(file_name_sequence_table)
+    println("\n\nhex_string:   ", hex_string)
+
+    println("\n Uploading sequence table to instrument \n")
 
    byte_command = Vector{UInt8}("2") #change 2 from string to byte string
+
+    println("\nbyte command ", byte_command)
 
    write(s,byte_command)   # Update sequence table
 
    ack=read(s,1); #acknowledge new sequence table before capturing frame
-   println(ack , "Sequence table Acknowledged")
+   println(ack , " -Sequence table Acknowledged")
 
    #change sequence table to byte string
    write(s, Vector{UInt8}(hex_string))
+
    #write(s, "#")   # End marker
    read(s, 1)  # acknowledge from microntroller
    #junk =read(s, 1)
    #println(junk);
-   println("Checking if any junk data is in the input stream (there should be none)")
+   println("\nChecking if any junk data is in the input stream (there should be none)")
    junk = readavailable(s)   # Clear out any old data
-   println("Number of junk bytes read:",length(junk))
-   println("Junk", junk)
-
+   println("Number of junk bytes read: ",length(junk))
+   println("Junk ", junk)
 
 
 
 # once port is opened and sequence table is uploaded, send a response
-    json_responder(req, s)
+    json_responder(req, "Serial port was successfully opened, sequence table was successfully uploaded")
 #end of initialise()
 end
 
@@ -117,7 +131,7 @@ end
 
 #=----------------local functions , not exposed as endpoints--------------------=#
 #read sequence table function
-function Read_sequence_table_file(file_name, sequence_table)
+function Read_sequence_table_file(file_name)
 
    # This function reads the sequence table from an ascii text file and converts the information into a string containing only the hex characters.
    # AJW & NB 2018-06-20
@@ -133,17 +147,25 @@ function Read_sequence_table_file(file_name, sequence_table)
 
 
    println("\nOpening ",file_name)
-   text= sequence_table
+
+   #text is the sequence of bytes, it can also be provided by the user.
+   text= "I1V1:  db #\$00,#\$0F,#\$00,#\$00,#\$10,#\$00,#\$00,#\$21,#\$00,#\$00,
+   #\$32,#\$00,#\$00,#\$43,#\$00,#\$00,#\$54,#\$00,#\$00,#\$65,#\$00,#\$00,#\$76,#\$00,#\$00,#\$87,
+   #\$00,#\$00,#\$98,#\$00,#\$00,#\$A9,#\$00,#\$00,#\$BA,#\$00,#\$00,#\$CB,#\$00,#\$00,#\$DC,#\$00,#\$00,#\$ED,#\$00,#\$00,#\$FE,#\$00"
+
    file = try
     #if file can be oppened get sequence table from it,
-     #else, assign table from HTTP.reqest variable
+     #else, assign table raw text provided above(ideally should be from the user using the browser)
         open(file_name) do f
         text = readstring(f)
         close(f)
         end
 
         catch err
-            println("\nCouldn't open file ",file_name, err)
+            println("\nCouldn't open file ", file_name," Will use raw text instead\n ", err)
+
+            #error("\nCouldn't open file ", file_name," \n ", err)
+
 
         end
 

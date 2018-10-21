@@ -90,8 +90,11 @@ Plotly.newPlot('graph3d', data3d, layout3d);
 $(document).ready(function(){
 
     //get element with id="getPorts" , trigger a function once it is clicked
+    //getPorts fetches the available ports from instrument
     $("#getPorts").click(function(){
 
+        // enable initialise instruments button
+        $(".needPort").removeClass("w3-disabled");
 
         // first clear any child in div
         radio_home.innerHTML = '';
@@ -117,9 +120,66 @@ $(document).ready(function(){
     });
 
 
+    //get element with id="getPorts" , trigger a function once it is clicked
+    $("#initialise").click(function(){
+
+
+        // check what input  is selected from the radio buttons
+      var selectedPort = $("input[name=port]:checked").val();
+
+      if(selectedPort){
+          // do request if port is selected
+
+          console.log("selected port to be opened during initialising ", selectedPort);
+
+          //send get request to local server , on response trigger the callback function
+          $.get("/api/initialise?port=" + selectedPort, function(data, status){
+
+              // data is an object with structure { 'error': bool, 'result': [] }
+              console.log(data);
+
+             // if there was an error opening the port, alert
+
+              if(data.error){
+                  $("#alertMessage").text("Error initialising port \"" + selectedPort + "\" Please select a different port and try again" );
+                  $("#alert").show();
+              }else {
+
+
+
+                  //show message to tell user that instrument has been initialised, and hide button
+                  // to avoid a bug which occurs when the sequence table is uploaded more than once
+                  // this is because initialise opens the port then uploads sequence table all the time it is called
+                  $("#alertMessage").text("Instrument Successfully initialised." );
+                  $("#alert").show();
+                  $("#initialise").hide();
+
+
+              }
+
+
+          });
+
+
+      }else{ //else display error message
+
+          $("#alertMessage").text("Please select a port!");
+          $("#alert").show();
+      }
+
+
+    });
+
+
+
     //get element with id="startUcurves" , trigger a function once it is clicked
     $("#startUcurves").click(function(){
 
+
+        if(true){
+
+
+        }
 
        timerId = setInterval(function(){
 

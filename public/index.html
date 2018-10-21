@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
 
-    <!--Ajax cdn-->
+    <!--Ajax and Jquery cdn-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 
@@ -49,7 +49,7 @@
 
     <!--div with all the initialisation controls-->
     <div class="w3-half w3-padding-16">
-        <div class="w3-card w3-padding-bottom">
+        <div class="w3-card w3-padding-bottom" style="height: 508px">
 
             <!--row of buttons to fetch ports, and start initialising-->
             <div class="w3-center">
@@ -60,8 +60,8 @@
                         Get Available Ports</button>
                     <!--initialise instrument -->
                     <button id="initialise"
-                            class="w3-button w3-cyan w3-margin-top w3-round-large">
-                        Initialise instruments</button>
+                            class="w3-button w3-cyan w3-margin-top w3-disabled needPort w3-round-large">
+                        Initialise instrument</button>
 
                 </div>
 
@@ -73,7 +73,7 @@
     </div>
 
 
-    <!--div where u curves histogram data is displayed-->
+    <!--div where u curves data is displayed-->
     <div class="w3-half w3-padding-16">
 
         <div class="w3-card">
@@ -83,11 +83,11 @@
                 <div class="w3-bar">
                     <!--get plot data when this button is pressed-->
                     <button id="startUcurves"
-                            class="w3-button w3-teal w3-margin-top w3-round-large">
+                            class="w3-button w3-teal needInitialise w3-disabled w3-margin-top w3-round-large">
                         Fetch uCurves Data</button>
                     <!--button to stop fetching plot data -->
                     <button id="stopUcurves"
-                            class="w3-button w3-cyan w3-margin-top w3-round-large">
+                            class="w3-button w3-cyan needInitialise w3-disabled w3-margin-top w3-round-large">
                         Stop fetching data</button>
 
                 </div>
@@ -133,6 +133,8 @@
         </div>
     </div>
 
+
+    <!--histogram display-->
     <div class="w3-half w3-padding-16">
         <div class="w3-card">
 
@@ -141,11 +143,11 @@
                 <div class="w3-bar">
                     <!--get plot data when this button is pressed-->
                     <button id="startHistogram"
-                            class="w3-button  w3-disabled w3-teal w3-margin-top w3-round-large">
+                            class="w3-button  w3-disabled needInitialise w3-teal w3-margin-top w3-round-large">
                         Display Histogram data</button>
                     <!--button to stop fetching plot data -->
                     <button id="stopHistogram"
-                            class="w3-button  w3-disabled w3-cyan w3-margin-top w3-round-large">
+                            class="w3-button  w3-disabled needInitialise w3-cyan w3-margin-top w3-round-large">
                         Stop displaying histogram data</button>
 
                 </div>
