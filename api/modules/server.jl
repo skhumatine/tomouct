@@ -1,7 +1,7 @@
 """
 # module server 
 
-- Julia version: 0.6.4
+- Julia version: 1.0
 - Author: skhum
 - Date: 2018-08-15
 
@@ -14,14 +14,15 @@ julia>
 
 
 
+
+
 module api  # name of module to handle any requests on julia
 
 #global module imports
-using Joseki, JSON, SerialPorts, HTTP
+using Joseki, JSON, SerialPorts, HTTP, Printf
 
 #functions or variables to export from the api module
 export capture_frame, get_ports, initialise
-
 
 # req is of type HTTP.Request
 #to set type use req::HTTP.Request
@@ -32,8 +33,75 @@ export capture_frame, get_ports, initialise
 #captures one frame and returns a sequence of data
 function capture_frame(req::HTTP.Request)
 
+
+ # Open com port and assign handle to s.
+    s = try
+        SerialPort("/dev/tty.usbmodem1411",9600)
+
+    catch(error)
+
+        println("\n\nerror opening port ", "/dev/tty.usbmodem1421", error)
+
+
+       # error("\n\nCould not open USB port.... aborting script.")
+      return error_responder(req, "Could not open USB port try again!")
+    end
+
+println("\n success opening port, information about port ", "/dev/tty.usbmodem1421", "\n ", s)
+
+
+#set variables and arrays
+N_frames = 1 #can only cupture one frame since a web socket is closed after any HTTP response
+
+println("N_frames = ", N_frames)
+
+Nsamples = 16*16  # Specify number (=16*16)of samples in a frame
+N_samples_reduced = 16*(16-3)   # 208 = reduced number after discarding those involving injection electrodes
+array_ADC_samples=Array{UInt16}(Nsamples)
+array_fixed=Array{UInt16}(Nsamples)
+array256_Ucurves=Array{UInt16}(Nsamples)
+array208_Ucurves=Array{UInt16}(N_samples_reduced)
+
+#begin fetching data from micro
+    sleep(1)
+
+    byte_command = Vector{UInt8}("5#") #change 5 from string to byte string
+
+    println("\nbyte command ", byte_command)
+
+   write(s,byte_command )   ## Send command to capture one frame
+   ack=read(s, 1); # Read ack from microcontroller
+   println(ack, "-Capturing frame " );
+
+    received_frame_string = try
+        #read(s, 513);  # read frame from Virtual ComPort  (513 bytes inc "#" marker)
+        readavailable(s)
+
+        catch error
+            println("error reading ", error)
+            error("\nCouldn't read from stream  \n ", error)
+        end
+
+   println(" \n received frame ", received_frame_string)
+
+    json_responder(req, "received_frame_string")
+
+   #r = Vector{UInt8}(received_frame_string)   # Convert string to UInt8 bytes
+   #array_ADC_samples[1]=r[2*1]*256 + r[2*1-1]#Convert to UInt16 ADC samples
+
+
+   # Currently, Bill's pcb V1 maps connects the STM pins to wrong order.
+   # It is in the same order as the connector on the Discovery, which is not ADC0..15.
+   # Thus we can fix this in software (done currently), or I can rewire the ribbon cable.
+  # array_fixed = Rearrange_to_fix_PCB_wiring_error(array_ADC_samples);  # Use software fix for PCB wiring error.
+   #array_fixed = arr;  # TEMP
+  # array256_Ucurves = Reorder_to_get_U_curves(array_fixed)
+
+   array208_Ucurves = Remove_measurements_involving_injection_electrodes(array256_Ucurves)
+
+
 #respond with an array as a result, check Joseki API on github
- json_responder(req, rand!(zeros(Int16,256),0:5000))
+ #json_responder(req, array_ADC_samples)
 
 #end of captureframe()
  end
@@ -98,17 +166,17 @@ println("\n Number of junk bytes read: ",length(junk))
 
     println("\n Uploading sequence table to instrument \n")
 
-   byte_command = Vector{UInt8}("2") #change 2 from string to byte string
+   byte_command = Vector{UInt8}("2#") #change 2 from string to byte string
 
     println("\nbyte command ", byte_command)
 
-   write(s,byte_command)   # Update sequence table
+   write(s,"2#")   # Update sequence table
 
-   ack=read(s,1); #acknowledge new sequence table before capturing frame
+   ack=readavailable(s); #acknowledge new sequence table before capturing frame
    println(ack , " -Sequence table Acknowledged")
 
    #change sequence table to byte string
-   write(s, Vector{UInt8}(hex_string))
+   write(s, Vector{UInt8}(hex_string*"#"))
 
    #write(s, "#")   # End marker
    read(s, 1)  # acknowledge from microntroller
@@ -238,6 +306,102 @@ function Read_sequence_table_file(file_name)
    #end of read sequence table function
 end
 
+function Rearrange_to_fix_PCB_wiring_error(array)
+
+   #Function to fix incorrect order of ADC lines on Bill's PCB Version 1.
+   # Alternatively, I could put a solder type DB25 onto the ribbon cable and re-order there.
+   #
+   # Currently, the wiring is as follows:
+   #    Amp chan: 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16
+   #     STM reg: C0 C1 C2 C3 A0 A1 A2 A2 A4 A5 A6 A7 C4 C5 B0 B1
+   # STM ADC num: 10 11 12 13 0  1  2  3  4  5  6  7  14 15 8  9
+   #
+   # Note: this function has been carefully checked and does the right thing.
+
+   Nsamples = length(array)
+   Ninjections = Int(Nsamples/16)   # There are 16 channels
+   #println(Ninjections)
+
+   a = Array{UInt16}(Nsamples) # Create output array
+
+   for n=0:Ninjections-1
+
+      offset=Int(n*16)
+
+      PA0 = array[1+offset]   #ADC0
+      PA1 = array[2+offset]   #ADC1
+      PA2 = array[3+offset]   #ADC2
+      PA3 = array[4+offset]   #ADC3
+      PA4 = array[5+offset]   #ADC4
+      PA5 = array[6+offset]   #ADC5
+      PA6 = array[7+offset]   #ADC6
+      PA7 = array[8+offset]   #ADC7
+      PB0 = array[9+offset]   #ADC8
+      PB1 = array[10+offset]   #ADC9
+      PC0 = array[11+offset]   #ADC10
+      PC1 = array[12+offset]   #ADC11
+      PC2 = array[13+offset]   #ADC12
+      PC3 = array[14+offset]   #ADC13
+      PC4 = array[15+offset]   #ADC14
+      PC5 = array[16+offset]   #ADC15
+
+      a[1+offset] = PC0
+      a[2+offset] = PC1
+      a[3+offset] = PC2
+      a[4+offset] = PC3
+      a[5+offset] = PA0
+      a[6+offset] = PA1
+      a[7+offset] = PA2
+      a[8+offset] = PA3
+      a[9+offset] = PA4
+      a[10+offset] = PA5
+      a[11+offset] = PA6
+      a[12+offset] = PA7
+      a[13+offset] = PC4
+      a[14+offset] = PC5
+      a[15+offset] = PB0
+      a[16+offset] = PB1
+   end
+   return a
+end
+
+function Reorder_to_get_U_curves(arr)
+   #the following double for loop shifts the ADC values around #such that the first ADC value in a block of 16 is the value #sampled nearest to the injection electrode
+   #the shift that happens depends on the injection electrode #represented by i
+
+   Nsamples = length(arr)
+   arrTemp = Array{UInt16}(Nsamples) # Create output array
+
+   for i=1:16    # injection number  (injection pairs 0F 10 21 .. FE)
+      for ch=1:16   # Amplifier/ADC channel number 1..16
+         arrTemp[ Int( (i-1)*16 + ch )] = arr[Int( (i-1)*16 + mod( (ch-1)-(i-1),16) +1 )]
+         # This is not how I thought it should be implemented - maybe I'm tired.
+      end
+   end
+   return(arrTemp)
+end
+
+
+function Remove_measurements_involving_injection_electrodes(array)
+
+   #the following double for loop converts a 256-element array #into a 208-element array which represents all the #measurements except the ones that come from the injection #electrodes. The resulting array is still in a u-curve
+
+   Nsamples = length(array)
+   Nframes = Nsamples/16
+
+   arrFinal = Array{UInt16}(UInt16(Nframes*(16-3))) # Create output array (size 208)
+
+   for i=1:16
+      k=0;
+      for j=3:1:15
+         k=k+1;
+         index = (i-1)*16+j
+         index2= [(i-1)*13+k]
+         arrFinal[index2]= array[index]
+      end
+   end
+   return(arrFinal)
+end
 
 #end of mudule api
 end

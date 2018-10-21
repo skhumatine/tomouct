@@ -2,7 +2,7 @@
 
 #=
 example:
-- Julia version: 0.6.4
+- Julia version: 1.0
 - Author: skhumbuzo Matine
 - Date: 2018-08-15
 =#
@@ -13,7 +13,7 @@ example:
 #to run this file from terminal $./index.jl
 
 #global module imports
-using Joseki, JSON
+using Joseki, JSON, HTTP
 
 #local file imports
 #import modules from server.jl file in modules folder
@@ -35,7 +35,7 @@ endpoints = [
 s = Joseki.server(endpoints)
 
 # Fire up the server
-HTTP.serve(s, ip"127.0.0.1", 8080; verbose=false)
+HTTP.serve(s, "127.0.0.1", 8080; verbose=false)
 
 
 

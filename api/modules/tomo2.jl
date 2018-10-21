@@ -57,9 +57,12 @@ function Read_sequence_table_file(file_name)
       println("\nReading sequence table text file: ",file_name)
    end
 
-   file = open(file_name)
-   text = readstring(file)
-   close(file)
+   #file = open(file_name)
+   text= "I1V1:  db #\$00,#\$0F,#\$00,#\$00,#\$10,#\$00,#\$00,#\$21,#\$00,#\$00,
+   #\$32,#\$00,#\$00,#\$43,#\$00,#\$00,#\$54,#\$00,#\$00,#\$65,#\$00,#\$00,#\$76,#\$00,#\$00,#\$87,
+   #\$00,#\$00,#\$98,#\$00,#\$00,#\$A9,#\$00,#\$00,#\$BA,#\$00,#\$00,#\$CB,#\$00,#\$00,#\$DC,#\$00,#\$00,#\$ED,#\$00,#\$00,#\$FE,#\$00"
+
+   #close(file)
 
    # Parse string text, extracting the hex bytes and converting them into various formats for transmission to a microcontroller or other usage
    # Currently all data sent to the microntroller is ascii text.
@@ -319,7 +322,7 @@ end
 
 println("\nOpening virtual com port")
 @show list_serialports()   # Display available com ports
-comport="COM4:" #Hard code the correct com port to use.
+comport="/dev/tty.usbmodem1411" #Hard code the correct com port to use.
 baudrate=9600   #Baudrate parameter is ignored is using a virtual comport.
 
 
@@ -343,15 +346,19 @@ upload_table_y_n = readline();
 if (upload_table_y_n=="y" || upload_table_y_n=="Y")
 
    println("\nLoading sequence table from file")
-   file_name_sequence_table="testtable.txt"
+   file_name_sequence_table="./testtable.txt"
    hex_string = Read_sequence_table_file(file_name_sequence_table)
    println("\n\nhex_string:   ",hex_string)
 
    println("Uploading sequence table to instrument")
-   write(s, "2#")   # Update sequence table
+
+   byte_command_two = Vector{UInt8}("2#") #change 5 from string to byte string
+
+
+   write(s, byte_command_two)   # Update sequence table
    ack=read(s,1); #acknowledge new sequence table before capturing frame
    println(ack)
-   write(s, hex_string*"#")
+   write(s, Vector{UInt8}(hex_string*"#"))
    #write(s, "#")   # End marker
    read(s, 1)  # acknowledge from microntroller
    #junk =read(s, 1)
@@ -433,12 +440,13 @@ while(n<=N_frames)
 
    tic()  # start timer
    sleep(1)
-   write(s, "5#") # Send command to capture one frame
+   byte_command_five = Vector{UInt8}("5#") #change 5 from string to byte string
+   write(s, byte_command_five) # Send command to capture one frame
    ack=read(s, 1); # Read ack from microcontroller
    if dbg println(ack); println("capturing frame)") end
    received_frame_string = read(s, 513);  # read frame from VCP port (513 bytes inc "#" marker)
 
-   if dbg println("received frame)") end
+   if dbg println("received frame") end
 
    time_to_capture_1_frame=toq();     # Note toq() does not print "elapsed .." at the REPL
 
