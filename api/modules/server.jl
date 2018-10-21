@@ -34,20 +34,35 @@ export capture_frame, get_ports, initialise
 function capture_frame(req::HTTP.Request)
 
 
- # Open com port and assign handle to s.
+#get query parameters sent along with the request
+    params = HTTP.queryparams(HTTP.URI(req.target))
+
+    #if port is not specified return an error with error message
+    if !(haskey(params, "port"))
+        return error_responder(req, "No port specified!")
+    end
+
+    #if port parameter is specified, open the com port with given port
+
+    #set comport along with baudrate variables
+    comport = params["port"]
+    baudrate = 9600
+
+
+    # Open com port and assign handle to s.
     s = try
-        SerialPort("/dev/tty.usbmodem1411",9600)
+        SerialPort(comport,baudrate)
 
     catch(error)
 
-        println("\n\nerror opening port ", "/dev/tty.usbmodem1421", error)
+        println("\n error opening port ", comport, error)
 
 
        # error("\n\nCould not open USB port.... aborting script.")
       return error_responder(req, "Could not open USB port try again!")
     end
 
-println("\n success opening port, information about port ", "/dev/tty.usbmodem1421 \n ")
+println("\n success opening port ", comport, " \n ")
 
 
 #set variables and arrays
@@ -100,6 +115,7 @@ array208_Ucurves=Array{UInt16}(undef,N_samples_reduced)
    #  convert data to json
      data_json = JSON.json(data)
 
+    #close port
     close(s)
     #respond with an array as a result, check Joseki API on github
     json_responder(req, data_json)

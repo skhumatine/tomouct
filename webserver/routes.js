@@ -20,16 +20,22 @@ getHandler = function(req, res) {
     }
 
 
-    //if the request to the server is localhost:80/api/capture-frame, run this code
+    //if the request to the server is localhost:80/api/capture-frame?port="something", run this code
     if(req.path === '/api/capture-frame'){
 
-        axios.get('http://localhost:8080/capture-frame')
-            .then(function (response) {
-                // handle success
+        console.log('request port capture-frame ',  req.query.port);
 
-                //send the response with data from the request
-                res.send(response.data)
-            }).catch((error)=>{
+        //if there is a query parameter port run this code, if not return error
+        if(req.query.port){
+
+            axios.get('http://localhost:8080/capture-frame?port=' +req.query.port)
+                .then(function (response) {
+                    // handle success
+
+                    //send the response with data from the request
+                    res.send(response.data)
+
+                }).catch((error)=>{
 
                 //log error
                 console.log(error);
@@ -37,6 +43,17 @@ getHandler = function(req, res) {
                 res.writeHead(404, {'Content-Type': 'text/html'}); //display 404 on error
                 return res.end("404 Not Found");
             })
+
+        }else{
+            //log error
+            console.log("No port provided on initialise....");
+
+            res.writeHead(404, {'Content-Type': 'text/html'}); //display 404 on error
+            return res.end("404 Not Found");
+
+        }
+
+
     }
 
     //if the request to the server is localhost:80/api/get-ports, run this code
