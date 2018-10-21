@@ -17,6 +17,8 @@
 #@time using GR
 #plot_type="gr"
 
+using Printf
+
 @time using PyPlot  #On Windows, don't forget to type ENV["MPLBACKEND"]="qt4agg" before running script.
 plot_type="pyplot"
 
@@ -57,9 +59,12 @@ function Read_sequence_table_file(file_name)
       println("\nReading sequence table text file: ",file_name)
    end
 
-   file = open(file_name)
-   text = readstring(file)
-   close(file)
+   #file = open(file_name)
+   text= "I1V1:  db #\$00,#\$0F,#\$00,#\$00,#\$10,#\$00,#\$00,#\$21,#\$00,#\$00,
+   #\$32,#\$00,#\$00,#\$43,#\$00,#\$00,#\$54,#\$00,#\$00,#\$65,#\$00,#\$00,#\$76,#\$00,#\$00,#\$87,
+   #\$00,#\$00,#\$98,#\$00,#\$00,#\$A9,#\$00,#\$00,#\$BA,#\$00,#\$00,#\$CB,#\$00,#\$00,#\$DC,#\$00,#\$00,#\$ED,#\$00,#\$00,#\$FE,#\$00"
+
+   #close(file)
 
    # Parse string text, extracting the hex bytes and converting them into various formats for transmission to a microcontroller or other usage
    # Currently all data sent to the microntroller is ascii text.
@@ -144,7 +149,7 @@ function Rearrange_to_fix_PCB_wiring_error(array)
    Ninjections = Int(Nsamples/16)   # There are 16 channels
    #println(Ninjections)
 
-   a = Array{UInt16}(Nsamples) # Create output array
+   a = Array{UInt16}(undef,Nsamples) # Create output array
 
    for n=0:Ninjections-1
 
@@ -225,7 +230,7 @@ function Reorder_to_get_U_curves(arr)
    #the shift that happens depends on the injection electrode #represented by i
 
    Nsamples = length(arr)
-   arrTemp = Array{UInt16}(Nsamples) # Create output array
+   arrTemp = Array{UInt16}(undef,Nsamples) # Create output array
 
    for i=1:16    # injection number  (injection pairs 0F 10 21 .. FE)
       for ch=1:16   # Amplifier/ADC channel number 1..16
@@ -244,7 +249,8 @@ function Remove_measurements_involving_injection_electrodes(array)
    Nsamples = length(array)
    Nframes = Nsamples/16
 
-   arrFinal = Array{UInt16}(UInt16(Nframes*(16-3))) # Create output array (size 208)
+   arrFinal = Array{Int,1}(undef, 208) # Create output array (size 208)
+   #Array{Int64}(undef, 5)
 
    for i=1:16
       k=0;
@@ -319,13 +325,13 @@ end
 
 println("\nOpening virtual com port")
 @show list_serialports()   # Display available com ports
-comport="COM4:" #Hard code the correct com port to use.
+comport="/dev/tty.usbmodem1411" #Hard code the correct com port to use.
 baudrate=9600   #Baudrate parameter is ignored is using a virtual comport.
 
 
-if isdefined(:s)   # If stream s exists, close it.
-   close(s)
-end
+#if isdefined(:s)   # If stream s exists, close it.
+ #  close(s)
+#end
 
 s = try
       SerialPort(comport,baudrate)  # Open com port and assign handle to s.
@@ -343,11 +349,15 @@ upload_table_y_n = readline();
 if (upload_table_y_n=="y" || upload_table_y_n=="Y")
 
    println("\nLoading sequence table from file")
-   file_name_sequence_table="testtable.txt"
+   file_name_sequence_table="./testtable.txt"
    hex_string = Read_sequence_table_file(file_name_sequence_table)
    println("\n\nhex_string:   ",hex_string)
 
    println("Uploading sequence table to instrument")
+
+   byte_command_two = Vector{UInt8}("2#") #change 5 from string to byte string
+
+
    write(s, "2#")   # Update sequence table
    ack=read(s,1); #acknowledge new sequence table before capturing frame
    println(ack)
@@ -378,16 +388,16 @@ Nsamples = 16*16  # Specify number (=16*16)of samples in a frame
 N_samples_reduced = 16*(16-3)   # 208 = reduced number after discarding those involving injection electrodes
 
 # Define arrays and variables (so that they are still visible outside the for loop at the REPL command line)
-array_ADC_samples=Array{UInt16}(Nsamples)
-array_fixed=Array{UInt16}(Nsamples)
-array256_Ucurves=Array{UInt16}(Nsamples)
-array208_Ucurves=Array{UInt16}(N_samples_reduced)
+array_ADC_samples=Array{UInt16}(undef,Nsamples)
+array_fixed=Array{UInt16}(undef,Nsamples)
+array256_Ucurves=Array{UInt16}(undef,Nsamples)
+array208_Ucurves=Array{UInt16}(undef,N_samples_reduced)
 speed_info = 0
 time_to_capture_1_frame = 0
 
 # Define arrays to store entire dataset
 store_array256_Ucurves=zeros(UInt16, N_frames, Nsamples)
-store_array208_Ucurves=zeros(UInt16, N_frames, N_samples_reduced)
+store_array208_Ucurves=zeros(UInt16, N_frames, Nsamples)
 
 
 # These arrays are used to calculate mean and standard deviation statistics
@@ -397,7 +407,6 @@ Sum_X = zeros(N_samples_reduced)
 
 
 
-n=1   # Frame counter in loop
 update_rate_ave = 0
 
 
@@ -422,25 +431,26 @@ t0 = time()  # Start timer
 
 dbg=true   # Set to true if you want to display debug messages at the standard output (REPL)
 
-while(n<=N_frames)
+for n = 1:N_frames
 
    #   sleep(0.01)  # slow it down
 
    if dbg
-      println(); println("Frame n=",n)
-      println("Sending command to capture one fame and then reading exactly 513 bytes")
+      println(); println("Frame n=", n)
+      println("Sending command to capture one ffame and then reading exactly 513 bytes")
    end
 
-   tic()  # start timer
+  #F tic()  # start timer
    sleep(1)
+   byte_command_five = Vector{UInt8}("5#") #change 5 from string to byte string
    write(s, "5#") # Send command to capture one frame
    ack=read(s, 1); # Read ack from microcontroller
-   if dbg println(ack); println("capturing frame)") end
+   if dbg println(ack); println(" capturing frame)") end
    received_frame_string = read(s, 513);  # read frame from VCP port (513 bytes inc "#" marker)
 
-   if dbg println("received frame)") end
+   if dbg println("received frame") end
 
-   time_to_capture_1_frame=toq();     # Note toq() does not print "elapsed .." at the REPL
+   time_to_capture_1_frame= 5;     # Note toq() does not print "elapsed .." at the REPL
 
    capture_rate=1/time_to_capture_1_frame
    if dbg
@@ -453,6 +463,8 @@ while(n<=N_frames)
    if dbg println("Processing retrieved data frame") end
 
    r = Vector{UInt8}(received_frame_string)   # Convert string to UInt8 bytes
+
+   println("received string ")
    for i=1:Nsamples
       array_ADC_samples[i]=r[2*i]*256 + r[2*i-1]#Convert to UInt16 ADC samples
    end
@@ -466,7 +478,8 @@ while(n<=N_frames)
 
    array256_Ucurves = Reorder_to_get_U_curves(array_fixed)
 
-   array208_Ucurves = Remove_measurements_involving_injection_electrodes(array256_Ucurves)
+   #array208_Ucurves = Remove_measurements_involving_injection_electrodes(array256_Ucurves)
+   array208_Ucurves = array256_Ucurves
 
    # println("length(arr) ",length(arr))
    # println("length(array256_Ucurves) ",length(array256_Ucurves))
@@ -481,8 +494,8 @@ while(n<=N_frames)
 
 
    #Create a string for adding to the plot
-   speed_info = ("N=$(n)   Screen updates: $(round(update_rate_ave,0)) fps    Capture rate (1 frame): $(round(capture_rate,0)) fps")
-
+  # speed_info = ("N=$(n)   Screen updates: $(round(update_rate_ave,0)) fps    Capture rate (1 frame): $(round(capture_rate,0)) fps")
+speed_info = "Spped info"
    number_of_injections_to_plot = 16   # Can reduce to 1 to plot just 1 U-curve
    xrange=1:16*number_of_injections_to_plot
 
@@ -520,7 +533,7 @@ while(n<=N_frames)
 
    # Store results for later  (UInt16, N_frames, Nsamples)
    store_array256_Ucurves[n,:]=array256_Ucurves
-   store_array208_Ucurves[n,:]=array208_Ucurves
+    store_array208_Ucurves[n,:]=array208_Ucurves
 
    # On the fly stats running totals
    Sum_X_squared = Sum_X_squared + Float64.(array208_Ucurves).^2;

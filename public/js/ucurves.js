@@ -89,15 +89,102 @@ Plotly.newPlot('graph3d', data3d, layout3d);
 //once the page has loaded , invoke the callback function
 $(document).ready(function(){
 
+    //get element with id="getPorts" , trigger a function once it is clicked
+    //getPorts fetches the available ports from instrument
+    $("#getPorts").click(function(){
 
-    //get element with id="start" , trigger a function once it is clicked
+        // enable initialise instruments button
+        $(".needPort").removeClass("w3-disabled");
+
+        // first clear any child in div
+        radio_home.innerHTML = '';
+
+        //send get request to local server , on response trigger the callback function
+        $.get("/api/get-ports", function(data, status){
+
+            // data is an object with structure { 'error': bool, 'result': [] }
+
+            // if there was an error, display it
+            if (data.error){
+                console.log('error getting ports: ',  data.result)
+            }else {
+
+                console.log(data.result);
+
+                makeRadioButton(data.result);
+            }
+
+        });
+
+
+    });
+
+
+    //get element with id="getPorts" , trigger a function once it is clicked
+    $("#initialise").click(function(){
+
+
+        // check what input  is selected from the radio buttons
+      var selectedPort = $("input[name=port]:checked").val();
+
+      if(selectedPort){
+          // do request if port is selected
+
+          console.log("selected port to be opened during initialising ", selectedPort);
+
+          //send get request to local server , on response trigger the callback function
+          $.get("/api/initialise?port=" + selectedPort, function(data, status){
+
+              // data is an object with structure { 'error': bool, 'result': [] }
+              console.log(data);
+
+             // if there was an error opening the port, alert
+
+              if(data.error){
+                  $("#alertMessage").text("Error initialising port \"" + selectedPort + "\" Please select a different port and try again" );
+                  $("#alert").show();
+              }else {
+
+
+
+                  //show message to tell user that instrument has been initialised, and hide button
+                  // to avoid a bug which occurs when the sequence table is uploaded more than once
+                  // this is because initialise opens the port then uploads sequence table all the time it is called
+                  $("#alertMessage").text("Instrument Successfully initialised." );
+                  $("#alert").show();
+                  $("#initialise").hide();
+
+
+              }
+
+
+          });
+
+
+      }else{ //else display error message
+
+          $("#alertMessage").text("Please select a port!");
+          $("#alert").show();
+      }
+
+
+    });
+
+
+
+    //get element with id="startUcurves" , trigger a function once it is clicked
     $("#startUcurves").click(function(){
 
+
+        if(true){
+
+
+        }
 
        timerId = setInterval(function(){
 
            //send get request to local server , on response trigger the callback function
-           $.get("/api/index", function(data, status){
+           $.get("/api/capture-frame", function(data, status){
 
                // data is an object with structure { 'error': bool, 'result': [] }
 
@@ -141,6 +228,8 @@ $(document).ready(function(){
 
 
     });
+
+
 
 
 
@@ -207,6 +296,26 @@ $(document).ready(function(){
 
 });
 
+// get the ide of the radio buttons div
+var radio_home = document.getElementById("radioButtons");
+//this funtions ads radio buttons when called
+function makeRadioButton(options) {
+    var div = document.createElement("div");
+    for (var i = 0; i < options.length; i++) {
+        var label = document.createElement("label");
+        var radio = document.createElement("input");
+        radio.type = "radio";
+        radio.name = "port";
+        radio.value = options[i];
+        label.appendChild(radio);
+        label.appendChild(document.createTextNode( "  " + options[i]));
+        div.appendChild(label);
+
+        //if we are on the last iteration there is no need to create another <br>
+        if(i+1<options.length)div.appendChild(document.createElement("br"));
+    }
+    radio_home.appendChild(div);
+}
 
 //testing functions ,
 // function randomize() {
