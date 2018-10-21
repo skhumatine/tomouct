@@ -48,33 +48,55 @@
 
 
     <!--div with all the initialisation controls-->
-    <div class="w3-half w3-padding-16">
-        <div class="w3-card w3-padding-bottom" style="height: 508px">
+    <div class="w3-padding-16">
+        <div class="w3-card w3-padding-bottom" style="height: 200px">
 
-            <!--row of buttons to fetch ports, and start initialising-->
-            <div class="w3-center">
-                <div class="w3-bar">
-                    <!--get available ports-->
-                    <button id="getPorts"
-                            class="w3-button w3-teal w3-margin-top w3-round-large">
-                        Get Available Ports</button>
-                    <!--initialise instrument -->
-                    <button id="initialise"
-                            class="w3-button w3-cyan w3-margin-top w3-disabled needPort w3-round-large">
-                        Initialise instrument</button>
+            <!--left hand section with buttons and radio buttons-->
+            <div class="w3-half">
+                <!--row of buttons to fetch ports, and start initialising-->
+                <div class="w3-center">
+                    <div class="w3-bar">
+                        <!--get available ports-->
+                        <button id="getPorts"
+                                class="w3-button w3-teal w3-margin-top w3-round-large">
+                            Get Available Ports</button>
+                        <!--initialise instrument -->
+                        <button id="initialise"
+                                class="w3-button w3-cyan w3-margin-top w3-disabled needPort w3-round-large">
+                            Initialise instrument</button>
+
+                    </div>
 
                 </div>
 
+                <div id="radioButtons" style="margin-bottom: 10px" class="w3-container"></div>
+
             </div>
 
-            <div id="radioButtons" style="margin-bottom: 10px" class="w3-container"></div>
+            <!--right hand section with open port and graph selector-->
+
+            <div class="w3-half">
+
+                <!--port that is opened-->
+                <h5 id="openedPort"></h5>
+
+                <!--graph to be displayed-->
+                <h5>Select data to show</h5>
+
+                <select id="graphToShow" class="w3-select">
+                    <option selected value="rawData">Raw Data</option>
+                    <option value="errorFixed">Error Fixed</option>
+                    <option value="arrayReordered">Array Reordered</option>
+                </select>
+            </div>
+
 
         </div>
     </div>
 
 
     <!--div where u curves data is displayed-->
-    <div class="w3-half w3-padding-16">
+    <div class="w3-padding-16">
 
         <div class="w3-card">
 

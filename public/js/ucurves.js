@@ -8,7 +8,7 @@ var uCurveData = [{
 }];
 
 var uCurveLayout = {
-    title: 'u curves',
+    title: 'U Curves',
     xaxis: {
         title: 'Readings',
         range: [0,256]
@@ -46,7 +46,7 @@ var histoLayout = {
 Plotly.plot('graphHistogram', histoData,  histoLayout );
 
 
-//--------------------3d plot data----------------------------//
+//--------------------3d plot data and initialisations----------------------------//
 
 /**
  *
@@ -88,6 +88,11 @@ Plotly.newPlot('graph3d', data3d, layout3d);
 /**-------------------------jQuery -------------**/
 //once the page has loaded , invoke the callback function
 $(document).ready(function(){
+
+    //opened port
+    var openedPort = "";
+
+    var dataArrays = {};
 
     //get element with id="getPorts" , trigger a function once it is clicked
     //getPorts fetches the available ports from instrument
@@ -140,12 +145,7 @@ $(document).ready(function(){
 
              // if there was an error opening the port, alert
 
-              if(data.error){
-                  $("#alertMessage").text("Error initialising port \"" + selectedPort + "\" Please select a different port and try again" );
-                  $("#alert").show();
-              }else {
-
-
+              if(!data.error){
 
                   //show message to tell user that instrument has been initialised, and hide button
                   // to avoid a bug which occurs when the sequence table is uploaded more than once
@@ -154,6 +154,20 @@ $(document).ready(function(){
                   $("#alert").show();
                   $("#initialise").hide();
 
+
+                  // enable capture-frames button
+                  $(".needInitialise").removeClass("w3-disabled");
+                  openedPort = selectedPort; // update value of selected port in case user selects
+                  // a different one, this value will be used every time a request is sent to the server
+                  $("#openedPort").text("Opened Port: " +openedPort );
+
+
+
+              }else {
+
+
+                  $("#alertMessage").text("Error initialising port \"" + selectedPort + "\" Please select a different port and try again" );
+                  $("#alert").show();
 
               }
 
@@ -176,45 +190,117 @@ $(document).ready(function(){
     $("#startUcurves").click(function(){
 
 
-        if(true){
+        //if the instrument was successfully initialised and a port was opened= portOpened variable is assigned.
+        //then fetch data
 
+        if(openedPort){
+            timerId = setInterval(function(){
+
+                //send get request to local server , on response trigger the callback function
+                $.get("/api/capture-frame?port=" + openedPort, function(data, status){
+
+                    // data is an object with structure { 'error': bool, 'result': [] }
+
+                    dataArrays = JSON.parse(data.result);
+                    console.log(dataArrays);
+
+                    // check what input  is selected from the radio buttons
+                    var graphToShow = $("#graphToShow").val();
+
+                    console.log(graphToShow);
+
+                    // change a graph to show based on the user's selection
+
+                    //raw data is selected
+                    if(graphToShow === "rawData"){
+                        //use the result parameter as data for a new u curve plot
+                        Plotly.animate('graphUcurves', {
+                            data: [{y: dataArrays.rawData}]
+                        }, {
+                            transition: {
+                                duration: 0,
+                            },
+                            frame: {
+                                duration: 0,
+                                redraw:false
+                            }
+                        });
+
+
+                        //use the result parameter as data for a new histogram plot
+                        Plotly.animate('graphHistogram', {
+                            data: [{x: dataArrays.rawData}]
+                        }, {
+                            transition: {
+                                duration: 500,
+                                easing: 'linear'
+                            }
+                        })
+                    }
+
+                    //errorFixed data is selected
+                    if(graphToShow === "errorFixed"){
+                        //use the result parameter as data for a new u curve plot
+                        Plotly.animate('graphUcurves', {
+                            data: [{y: dataArrays.errorFixed}]
+                        }, {
+                            transition: {
+                                duration: 0,
+                            },
+                            frame: {
+                                duration: 0,
+                                redraw:false
+                            }
+                        });
+
+
+                        //use the result parameter as data for a new histogram plot
+                        Plotly.animate('graphHistogram', {
+                            data: [{x: dataArrays.errorFixed}]
+                        }, {
+                            transition: {
+                                duration: 500,
+                                easing: 'linear'
+                            }
+                        })
+                    }
+
+                    //array reordered data is selected
+                    if(graphToShow === "arrayReordered"){
+                        //use the result parameter as data for a new u curve plot
+                        Plotly.animate('graphUcurves', {
+                            data: [{y: dataArrays.arrayReordered}]
+                        }, {
+                            transition: {
+                                duration: 0,
+                            },
+                            frame: {
+                                duration: 0,
+                                redraw:false
+                            }
+                        });
+
+
+                        //use the result parameter as data for a new histogram plot
+                        Plotly.animate('graphHistogram', {
+                            data: [{x: dataArrays.arrayReordered}]
+                        }, {
+                            transition: {
+                                duration: 500,
+                                easing: 'linear'
+                            }
+                        })
+                    }
+
+
+                });
+
+
+            }, 200);
 
         }
 
-       timerId = setInterval(function(){
 
-           //send get request to local server , on response trigger the callback function
-           $.get("/api/capture-frame", function(data, status){
-
-               // data is an object with structure { 'error': bool, 'result': [] }
-
-               //use the result parameter as data for a new u curve plot
-               Plotly.animate('graphUcurves', {
-                   data: [{y: data.result}]
-               }, {
-                   transition: {
-                       duration: 0,
-                   },
-                   frame: {
-                       duration: 0,
-                       redraw:false
-                   }
-               });
-
-
-               //use the result parameter as data for a new histogram plot
-               Plotly.animate('graphHistogram', {
-                   data: [{x: data.result}]
-               }, {
-                   transition: {
-                       duration: 500,
-                       easing: 'linear'
-                   }
-               })
-           });
-
-
-       }, 100);
 
 
     });
@@ -222,7 +308,6 @@ $(document).ready(function(){
 
     //get element with id="stop" , trigger a function once it is clicked
     $("#stopUcurves").click(function(){
-
 
         clearInterval(timerId)
 
@@ -296,9 +381,11 @@ $(document).ready(function(){
 
 });
 
+
+/**____________radio buttons code, used to dynamically insert radio buttons to the document__________**/
 // get the ide of the radio buttons div
 var radio_home = document.getElementById("radioButtons");
-//this funtions ads radio buttons when called
+//this functions ads radio buttons when called
 function makeRadioButton(options) {
     var div = document.createElement("div");
     for (var i = 0; i < options.length; i++) {
@@ -317,7 +404,7 @@ function makeRadioButton(options) {
     radio_home.appendChild(div);
 }
 
-//testing functions ,
+/**____________________testing functions __________________**/
 // function randomize() {
 //
 //     // repeat with the interval of 2 seconds
